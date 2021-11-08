@@ -1,0 +1,32 @@
+table, 
+td, 
+th {
+    border: 1px solid black;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td,
+th {
+    padding: 10px;
+}
+
+.card {
+    border: 1px solid black;
+    width: fit-content;
+    min-width: 200px;
+    text-align: center;
+    margin: auto;
+    padding: 100px;
+  }
+  
+  .card:hover {
+    cursor: pointer;
+  }
+
+.center {
+    margin: auto;
+    text-align: center;
+}
