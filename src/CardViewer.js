@@ -1,14 +1,17 @@
 import React from 'react';
 import './Card.css';
-import {Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
+import {firebaseConnect, isLoaded, isEmpty} from 'react-redux-firebase';
+import { connect} from 'react-redux';
+import {compose} from 'redux';
 class CardViewer extends React.Component {
     constructor(props){
         super(props);
         this.state = { 
-            front: this.props.cards[0].front, 
-            back: this.props.cards[0].back, 
-            currentIndex: 0, flipped: true
+            currentIndex: 0, 
+            flipped: true
         };
     };
 
@@ -39,12 +42,20 @@ class CardViewer extends React.Component {
     };
 
     render() {
+        if (!isLoaded(this.props.cards)) {
+            return <div> Loading... </div>;
+        }
+
+        if (isEmpty(this.props.cards)) {
+            return <div>Page not found!</div>;
+        }
 
         const card = this.props.cards[this.state.currentIndex][this.state.flipped ? 'back' : 'front'];
         
         return (
-            <div class="center">
-                <h2>Card Viewer</h2>
+    
+            <div className="center">
+                <h2>{this.props.name}</h2>
                 <h4>Card {this.state.currentIndex + 1} out of {this.props.cards.length}.</h4>
 
                 <div className="card" onClick={this.flip}>
@@ -60,11 +71,28 @@ class CardViewer extends React.Component {
                     onClick={this.next}>Next
                 </button>
                 <hr />
-                <Link to='/editor'>Go to card editor</Link>
+                <Link to='/'>Home</Link>
             </div>
             
         )
     }
 }
 
-export default CardViewer;
+const mapStateToProps = (state, props)=> {
+    console.log(state);
+    const deck = state.firebase.data[props.match.params.deckId];
+    // shortcircuiting; doesn't load variables if haven't loaded
+    const name = deck && deck.name;
+    const cards = deck && deck.cards;
+    return { cards: cards, name: name };
+}
+
+export default compose(
+    withRouter,
+    firebaseConnect(props => {
+        console.log('props', props);
+        const deckId = props.match.params.deckId;
+        return [{path: `/flashcards/${deckId}`, storeAs: deckId }];
+    }),
+    connect(mapStateToProps),
+)(CardViewer);

@@ -4,13 +4,10 @@ import App from './App.js';
 
 import { BrowserRouter } from 'react-router-dom';
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-
-import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import firebase from 'firebase/compat/app';
-import { createStore, combineReducers, compose } from 'redux';
+import 'firebase/compat/database'
+import { createStore, combineReducers } from 'redux';
 import {
   ReactReduxFirebaseProvider,
   firebaseReducer
@@ -28,12 +25,11 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
 // Add firebase to reducers
 const rootReducer = combineReducers({
   firebase: firebaseReducer
-  // firestore: firestoreReducer // <- needed if using firestore
 });
 
 // Create store with reducers and initial state
@@ -42,8 +38,6 @@ const store = createStore(rootReducer, composeWithDevTools());
 // react-redux-firebase config
 const rrfConfig = {
   userProfile: 'users',
-  // useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
-  // enableClaims: true // Get custom claims along with the profile
 };
 
 const rrfProps = {
